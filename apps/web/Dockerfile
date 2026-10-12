@@ -1,11 +1,12 @@
 # Build context is the repo root (pnpm workspace).
 FROM node:22-slim AS base
 ENV PNPM_HOME=/pnpm PATH="/pnpm:$PATH"
-RUN corepack enable
+RUN corepack enable && corepack prepare pnpm@10.28.0 --activate
 WORKDIR /repo
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY apps/web/package.json apps/web/
-COPY packages/shared/package.json packages/shared/
+COPY packages/api-client/package.json packages/api-client/
+COPY packages/ui/package.json packages/ui/
 COPY packages/tsconfig/package.json packages/tsconfig/
 RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile --filter @app/web...
 COPY packages packages

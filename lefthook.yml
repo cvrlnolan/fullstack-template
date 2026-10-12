@@ -2,7 +2,7 @@ pre-commit:
   parallel: true
   jobs:
     - name: biome
-      glob: "*.{js,jsx,ts,tsx,json,jsonc,css}"
+      glob: "*.{js,jsx,mjs,ts,tsx,json,jsonc,css}"
       run: pnpm exec biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
       stage_fixed: true
     - name: ruff-lint
@@ -13,6 +13,13 @@ pre-commit:
       glob: "*.py"
       run: uv run ruff format {staged_files}
       stage_fixed: true
+    # Fails when the FastAPI app and the committed OpenAPI schema / generated TS types disagree.
+    - name: api-schema
+      glob: "{apps/api/**/*.py,packages/api-client/openapi.json,packages/api-client/src/schema.d.ts}"
+      run: pnpm api:schema:check
+    - name: pinned-deps
+      glob: "{package.json,**/package.json,pyproject.toml,**/pyproject.toml}"
+      run: pnpm check:pins
 
 pre-push:
   parallel: true

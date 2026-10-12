@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+/* Shared semantic theme mapping + shared component classes. */
+@import "@app/ui/styles.css";
+@source "../../../../packages/ui/src";
+
+/*
+ * This app's design tokens. Start from the shared neutral set, then override anything below, or
+ * replace the import with your own token file to fully re-skin every shared component in this app.
+ */
+@import "@app/ui/tokens/neutral.css";
+
+:root {
+  /* example override: --primary: oklch(0.55 0.2 260); --radius: 0.75rem; */
+}

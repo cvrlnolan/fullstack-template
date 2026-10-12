@@ -1,18 +1,23 @@
 # Fullstack Template
 
-pnpm + uv monorepo for AI-powered fullstack apps.
+pnpm + uv monorepo for AI-powered fullstack apps. Next.js frontends, FastAPI backend, one typed contract between them.
 
 ```
 apps/
-  web/          Next.js (App Router, Tailwind v4) — proxies /api/* to the API
-  api/          FastAPI + Anthropic SDK (managed by uv)
+  web/                 Next.js (App Router, Tailwind v4, vitest) — proxies /api/* to the API
+  api/                 FastAPI + Anthropic SDK (uv)
+    src/api/
+      core/            config (UPPER_CASE settings), cross-cutting infra
+      db/              engine / session dependency
+      models/          SQLAlchemy ORM models (tables)
+      schemas/         Pydantic request/response models (camelCase on the wire)
+      services/        business logic (no FastAPI imports)
+      routers/         HTTP layer: thin, declares operation_id + response_model
+    scripts/           export_openapi.py
 packages/
-  shared/       TS types shared across JS apps
-  tsconfig/     Shared tsconfig presets
-pyproject.toml  uv workspace root + ruff / pyright / pytest config
-biome.json      Lint/format for JS/TS/JSON/CSS
-lefthook.yml    pre-commit (biome, ruff) and pre-push (typecheck, test)
-docker-compose.yml   web + api + Postgres (pgvector)
+  api-client/          openapi.json + generated types + typed fetch client & operations
+  ui/                  shared shadcn components + theme contract (no design values)
+  tsconfig/            shared tsconfig presets
 ```
 
 ## Getting started
@@ -34,12 +39,45 @@ Without Docker: `pnpm dev:api` and `pnpm dev:web` in separate terminals.
 | --- | --- |
 | `pnpm lint` / `lint:fix` | biome + ruff |
 | `pnpm typecheck` | tsc + pyright (strict) |
-| `pnpm test` | pytest (+ any JS `test` scripts) |
-| `pnpm check` | all of the above |
+| `pnpm test` | vitest (JS) + pytest (Python) |
+| `pnpm api:schema` | re-export OpenAPI from FastAPI and regenerate TS types |
+| `pnpm api:schema:check` | fail if the committed schema/types are stale (pre-commit + CI) |
+| `pnpm check:pins` | fail if any dependency is not pinned to an exact version |
+| `pnpm check` | everything above |
+
+## API contract (backend → frontend)
+
+FastAPI is the source of truth. The flow is:
+
+1. Define Pydantic models in `schemas/` extending `ApiModel` (snake_case in Python, **camelCase** on the wire).
+2. Give each route an `operation_id` and `response_model`.
+3. `pnpm api:schema` → writes `packages/api-client/openapi.json` and `src/schema.d.ts`.
+4. Add a typed function to `packages/api-client/src/operations.ts` (or call `client.GET/POST` directly — paths, params and bodies are type-checked against the schema).
+
+The pre-commit hook runs `pnpm api:schema:check` whenever API code or the generated files change, and CI runs it too, so the contract can't drift.
+
+## Design tokens & shared UI (shadcn)
+
+`packages/ui` holds the shadcn components. They only use **semantic** utilities (`bg-primary`, `text-muted-foreground`, `rounded-lg`…), and `@app/ui/styles.css` maps those to CSS variables **without defining values**. Each app owns the values:
+
+```css
+/* apps/<app>/src/app/globals.css */
+@import "tailwindcss";
+@import "@app/ui/styles.css";
+@source "../../../../packages/ui/src";
+@import "@app/ui/tokens/neutral.css";   /* or your own token file */
+:root { --primary: oklch(0.55 0.2 260); --radius: 0.75rem; }
+```
+
+Same components, different look per app. Add components with the shadcn CLI (`components.json` is set up for the monorepo):
+`pnpm dlx shadcn@latest add dialog -c apps/web`.
+
+## Dependency pinning
+
+All dependencies are exact (`.npmrc` has `save-exact=true`; Python uses `==`; `pnpm check:pins` enforces it in hooks and CI). For Python add with `uv add --bounds exact <pkg>`. Upgrade deliberately and review the diff.
 
 ## Adding things
 
-- **JS app/package**: create `apps/<name>` or `packages/<name>` with a `package.json` named `@app/<name>`; the pnpm workspace picks it up. Add its `Dockerfile` + compose service if needed.
-- **Python app/lib**: create it with its own `pyproject.toml`, add it to `[tool.uv.workspace].members` in the root `pyproject.toml` (and as a root dependency + `[tool.uv.sources]` entry so `uv run` sees it).
-- **API router**: add a module under `apps/api/src/api/routers/` and include it in `main.py`.
-- Keep `packages/shared` types aligned with `apps/api/src/api/schemas.py` (or generate from the OpenAPI spec at `/openapi.json`).
+- **FE app**: `apps/<name>` with `@app/<name>`; depend on `@app/ui` and `@app/api-client`, add a `globals.css` as above.
+- **Python app/lib**: own `pyproject.toml`, add to `[tool.uv.workspace].members`, and as a root dependency + `[tool.uv.sources]` entry.
+- **Endpoint**: schema → service → router → `pnpm api:schema` → operation.

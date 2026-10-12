@@ -1,0 +1,1 @@
+{ "extends": "@app/tsconfig/react.json", "include": ["src", "scripts", "vitest.setup.ts"] }

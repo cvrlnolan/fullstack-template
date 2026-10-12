@@ -15,5 +15,5 @@ jobs:
         with: { enable-cache: true }
       - run: pnpm install --frozen-lockfile
       - run: uv sync --frozen
-      - run: pnpm check
+      - run: pnpm check   # pins, OpenAPI schema freshness, lint, typecheck, tests
       - run: pnpm build

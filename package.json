@@ -9,18 +9,21 @@
   "scripts": {
     "dev": "docker compose up --build",
     "dev:web": "pnpm --filter @app/web dev",
-    "dev:api": "uv run --package api fastapi dev apps/api/src/api/main.py",
+    "dev:api": "uv run fastapi dev apps/api/src/api/main.py",
     "build": "pnpm -r --if-present build",
     "lint": "biome check . && uv run ruff check . && uv run ruff format --check .",
     "lint:fix": "biome check --write . && uv run ruff check --fix . && uv run ruff format .",
     "typecheck": "pnpm -r --if-present typecheck && uv run pyright",
     "test": "pnpm -r --if-present test && uv run pytest",
-    "check": "pnpm lint && pnpm typecheck && pnpm test",
-    "prepare": "lefthook install"
+    "check": "pnpm check:pins && pnpm api:schema:check && pnpm lint && pnpm typecheck && pnpm test",
+    "prepare": "lefthook install",
+    "api:schema": "uv run python apps/api/scripts/export_openapi.py && pnpm --filter @app/api-client generate",
+    "api:schema:check": "uv run python apps/api/scripts/export_openapi.py --check && pnpm --filter @app/api-client generate:check",
+    "check:pins": "node scripts/check-pins.mjs"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.15",
-    "lefthook": "^2.2.1",
-    "typescript": "^5.9.3"
+    "@biomejs/biome": "2.5.15",
+    "lefthook": "2.2.1",
+    "typescript": "5.9.3"
   }
 }

@@ -10,6 +10,8 @@ services:
     volumes:
       - ./apps/web:/repo/apps/web
       - ./packages:/repo/packages
+      - /repo/packages/api-client/node_modules
+      - /repo/packages/ui/node_modules
       - /repo/node_modules
       - /repo/apps/web/node_modules
       - /repo/apps/web/.next
@@ -25,14 +27,14 @@ services:
       - path: .env
         required: false
     environment:
-      DATABASE_URL: postgresql://app:${POSTGRES_PASSWORD:-app}@db:5432/app
+      DATABASE_URL: postgresql+asyncpg://app:${POSTGRES_PASSWORD:-app}@db:5432/app
     volumes:
       - ./apps/api:/repo/apps/api
     depends_on:
       db: { condition: service_healthy }
 
   db:
-    image: pgvector/pgvector:pg17
+    image: pgvector/pgvector:0.8.1-pg17
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app}

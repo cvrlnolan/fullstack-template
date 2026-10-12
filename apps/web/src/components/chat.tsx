@@ -1,18 +1,22 @@
 "use client";
 
-import type { ChatMessage } from "@app/shared";
+import type { Schemas } from "@app/api-client";
+import { Button } from "@app/ui/components/button";
+import { Input } from "@app/ui/components/input";
 import { useState } from "react";
-import { streamChat } from "@/lib/api";
+import { api } from "@/lib/api";
 
-export function Chat() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+type Message = Schemas["ChatMessage"];
+
+export function Chat({ streamChat = api.streamChat }: { streamChat?: typeof api.streamChat }) {
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
     if (!input.trim() || busy) return;
-    const history: ChatMessage[] = [...messages, { role: "user", content: input }];
+    const history: Message[] = [...messages, { role: "user", content: input }];
     setMessages([...history, { role: "assistant", content: "" }]);
     setInput("");
     setBusy(true);
@@ -35,28 +39,22 @@ export function Chat() {
     <div className="space-y-4">
       <ul className="space-y-2">
         {messages.map((m, i) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: append-only list
           <li key={i} className={m.role === "user" ? "text-right" : ""}>
-            <span className="inline-block whitespace-pre-wrap rounded-lg bg-neutral-100 px-3 py-2">
+            <span className="inline-block whitespace-pre-wrap rounded-lg bg-muted px-3 py-2">
               {m.content}
             </span>
           </li>
         ))}
       </ul>
       <form onSubmit={send} className="flex gap-2">
-        <input
+        <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Say something…"
-          className="flex-1 rounded border px-3 py-2"
         />
-        <button
-          type="submit"
-          disabled={busy}
-          className="rounded bg-black px-4 py-2 text-white disabled:opacity-50"
-        >
+        <Button type="submit" disabled={busy}>
           Send
-        </button>
+        </Button>
       </form>
     </div>
   );
