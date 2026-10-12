@@ -1,0 +1,11 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Only workspace packages listed here are installed; Python apps have no package.json
+# and are managed by uv (see pyproject.toml).
+onlyBuiltDependencies:
+  - "@biomejs/biome"
+  - esbuild
+  - sharp
+  - lefthook

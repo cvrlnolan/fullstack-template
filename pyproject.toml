@@ -1,0 +1,44 @@
+# Root of the uv workspace. Python apps live in apps/*; add shared libs under packages/py-* and list them here.
+[project]
+name = "fullstack-template"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = ["api"]  # pull every workspace app into the root env so `uv run` just works
+
+[tool.uv.sources]
+api = { workspace = true }
+
+[tool.uv.workspace]
+members = ["apps/api"]
+
+[dependency-groups]
+dev = ["ruff>=0.14", "pyright>=1.1.400", "pytest>=8", "pytest-asyncio>=1", "httpx>=0.28"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [".venv", "node_modules", ".next"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC", "RUF", "S", "C4", "PT"]
+ignore = ["S101"]  # assert is fine (tests)
+
+[tool.ruff.lint.isort]
+known-first-party = ["api"]
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["S"]
+
+[tool.pyright]
+include = ["apps/api"]
+exclude = ["**/.venv", "**/node_modules"]
+venvPath = "."
+venv = ".venv"
+extraPaths = ["apps/api/src"]
+typeCheckingMode = "strict"
+pythonVersion = "3.12"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["apps/api/tests"]
+pythonpath = ["apps/api/src"]
