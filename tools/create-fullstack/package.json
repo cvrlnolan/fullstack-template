@@ -1,0 +1,29 @@
+{
+  "name": "@cvrlnolan/create-fullstack",
+  "version": "0.1.0",
+  "description": "Scaffold a pnpm + uv fullstack monorepo (Next.js, FastAPI, typed OpenAPI contract, shared shadcn UI).",
+  "license": "MIT",
+  "author": "George Mbome",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cvrlnolan/fullstack-template.git"
+  },
+  "type": "module",
+  "bin": {
+    "create-fullstack": "bin/create-fullstack.mjs"
+  },
+  "files": [
+    "bin",
+    "template"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "bundle": "node scripts/bundle.mjs",
+    "prepack": "node scripts/bundle.mjs"
+  }
+}

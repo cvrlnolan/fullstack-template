@@ -1,8 +1,8 @@
 // One-time setup for a repo created from this template:
 //   pnpm init:project my-app
-// Renames the project, refreshes lockfile/schema, and removes this script + the template notes.
+// Renames the project, refreshes lockfile/schema, and removes this script, the template notes and tools/create-fullstack.
 import { execSync } from "node:child_process";
-import { readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 
 const name = process.argv[2];
 if (!name || !/^[a-z][a-z0-9]*(-[a-z0-9]+)*$/.test(name)) {
@@ -40,6 +40,9 @@ edit("README.md", (s) =>
 );
 
 rmSync("scripts/init-project.mjs");
+// The scaffolding CLI only makes sense in the template repo itself.
+if (existsSync("tools/create-fullstack")) rmSync("tools/create-fullstack", { recursive: true });
+if (existsSync("tools") && readdirSync("tools").length === 0) rmSync("tools", { recursive: true });
 
 run("uv lock");
 run("pnpm api:schema");

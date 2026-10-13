@@ -13,6 +13,7 @@ packages/api-client     openapi.json + generated types + typed fetch client/oper
 packages/ui             shared shadcn components + theme contract (no design values)
 packages/tsconfig       shared tsconfig presets
 scripts/                check-pins.mjs, init-project.mjs (one-time, deletes itself)
+tools/create-fullstack  npm CLI (zero deps) that scaffolds this template; template-repo only, removed by init:project; NOT a pnpm workspace member
 ```
 
 Tooling: Node 22, pnpm 10 (workspace), uv + Python 3.13 (requires >=3.12), Biome (JS/TS/JSON/CSS), Ruff + Pyright strict (Python), Vitest (JS tests), Pytest (Python tests), Lefthook (git hooks), Docker Compose (local dev).

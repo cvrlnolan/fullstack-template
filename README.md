@@ -23,15 +23,25 @@ packages/
 <!-- template:start -->
 ## Using this template
 
+**Option A: CLI** (needs Node 22+, pnpm, uv). Scaffolds, installs, renames and makes the first commit:
+
+```sh
+npm create @cvrlnolan/fullstack my-app      # or: npx @cvrlnolan/create-fullstack my-app
+```
+
+Flags: `--no-install` (copy only), `--no-git`.
+
+**Option B: GitHub template**
+
 1. On GitHub: **Use this template → Create a new repository**, then clone it.
 2. `cp .env.example .env`, `pnpm install`, `uv sync`.
-3. `pnpm init:project <your-name>` — renames the project (root package, Python project, API title, app title), refreshes `uv.lock` and the OpenAPI schema, then deletes itself and this section. Commit the result.
+3. `pnpm init:project <your-name>` — renames the project (root package, Python project, API title, app title), refreshes `uv.lock` and the OpenAPI schema, then deletes itself, `tools/create-fullstack` and this section. Commit the result.
 4. `pnpm dev`.
 5. When you start real features, delete the example chat code (list in `AGENTS.md` → "Template example code").
 
 The `@app/*` workspace scope and the `app` database name are intentionally generic; keep them.
 
-(Maintainers: enable **Settings → Template repository** on the template repo.)
+(Maintainers: enable **Settings → Template repository** on the template repo. To publish the CLI: `cd tools/create-fullstack && npm publish`; it snapshots the git-tracked repo into the package on `prepack`, so commit first.)
 <!-- template:end -->
 
 ## Getting started
