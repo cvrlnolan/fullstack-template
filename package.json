@@ -16,7 +16,7 @@
     "typecheck": "pnpm -r --if-present typecheck && uv run pyright",
     "test": "pnpm -r --if-present test && uv run pytest",
     "check": "pnpm check:pins && pnpm api:schema:check && pnpm lint && pnpm typecheck && pnpm test",
-    "prepare": "lefthook install",
+    "prepare": "lefthook install || echo skipping git hooks",
     "api:schema": "uv run python apps/api/scripts/export_openapi.py && pnpm --filter @app/api-client generate",
     "api:schema:check": "uv run python apps/api/scripts/export_openapi.py --check && pnpm --filter @app/api-client generate:check",
     "check:pins": "node scripts/check-pins.mjs"
