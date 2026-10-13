@@ -19,7 +19,8 @@
     "prepare": "lefthook install || echo skipping git hooks",
     "api:schema": "uv run python apps/api/scripts/export_openapi.py && pnpm --filter @app/api-client generate",
     "api:schema:check": "uv run python apps/api/scripts/export_openapi.py --check && pnpm --filter @app/api-client generate:check",
-    "check:pins": "node scripts/check-pins.mjs"
+    "check:pins": "node scripts/check-pins.mjs",
+    "init:project": "node scripts/init-project.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

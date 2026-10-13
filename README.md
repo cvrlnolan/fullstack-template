@@ -20,6 +20,19 @@ packages/
   tsconfig/            shared tsconfig presets
 ```
 
+<!-- template:start -->
+## Using this template
+
+1. On GitHub: **Use this template → Create a new repository**, then clone it.
+2. `cp .env.example .env`, `pnpm install`, `uv sync`.
+3. `pnpm init:project <your-name>` — renames the project (root package, Python project, API title, app title), refreshes `uv.lock` and the OpenAPI schema, then deletes itself and this section. Commit the result.
+4. `pnpm dev`.
+
+The `@app/*` workspace scope and the `app` database name are intentionally generic; keep them.
+
+(Maintainers: enable **Settings → Template repository** on the template repo.)
+<!-- template:end -->
+
 ## Getting started
 
 Requires Node 22+, pnpm 10+, uv, Docker.
