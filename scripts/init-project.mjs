@@ -39,6 +39,19 @@ edit("README.md", (s) =>
     .replace(/<!-- template:start -->[\s\S]*?<!-- template:end -->\n*/, ""),
 );
 
+// AGENTS.md describes the template scaffolding; drop those lines in a real project.
+if (existsSync("AGENTS.md")) {
+  const agents = readFileSync("AGENTS.md", "utf8")
+    .split("\n")
+    .filter((l) => !l.startsWith("tools/create-fullstack"))
+    .join("\n")
+    .replace(
+      "scripts/                check-pins.mjs, init-project.mjs (one-time, deletes itself)",
+      "scripts/                check-pins.mjs",
+    );
+  writeFileSync("AGENTS.md", agents);
+}
+
 rmSync("scripts/init-project.mjs");
 // The scaffolding CLI only makes sense in the template repo itself.
 if (existsSync("tools/create-fullstack")) rmSync("tools/create-fullstack", { recursive: true });
