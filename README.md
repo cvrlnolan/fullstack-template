@@ -27,6 +27,7 @@ packages/
 2. `cp .env.example .env`, `pnpm install`, `uv sync`.
 3. `pnpm init:project <your-name>` — renames the project (root package, Python project, API title, app title), refreshes `uv.lock` and the OpenAPI schema, then deletes itself and this section. Commit the result.
 4. `pnpm dev`.
+5. When you start real features, delete the example chat code (list in `AGENTS.md` → "Template example code").
 
 The `@app/*` workspace scope and the `app` database name are intentionally generic; keep them.
 

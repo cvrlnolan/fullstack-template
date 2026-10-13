@@ -17,6 +17,22 @@ scripts/                check-pins.mjs, init-project.mjs (one-time, deletes itse
 
 Tooling: Node 22, pnpm 10 (workspace), uv + Python 3.13 (requires >=3.12), Biome (JS/TS/JSON/CSS), Ruff + Pyright strict (Python), Vitest (JS tests), Pytest (Python tests), Lefthook (git hooks), Docker Compose (local dev).
 
+## Template example code (remove when the real project starts)
+
+The streaming chat feature and a few other pieces are **demo scaffolding** that shows how the layers fit together. They are not product requirements. Once the project has real features, delete them (or replace them) rather than building on them. Unless the user says to keep them, treat them as removable:
+
+| Layer | Example code |
+| --- | --- |
+| Web | `apps/web/src/components/chat.tsx`, `chat.test.tsx`, and the `<Chat />` usage in `src/app/page.tsx` (replace the page with real content) |
+| API | `routers/chat.py`, `services/chat.py`, `schemas/chat.py`, the `chat` router in `main.py`, and the chat tests in `tests/test_health.py` |
+| API models | `models/conversation.py` (`Conversation`, `Message`) is an illustrative ORM example; `models/base.py` and `db/` are the reusable foundation, so keep those |
+| Contract | `streamChat` in `packages/api-client/src/operations.ts` and its test in `operations.test.ts` |
+| Config | `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` in `core/config.py` and `.env.example`, and the `anthropic` dependency in `apps/api/pyproject.toml` **only if** the project won't use Claude |
+
+Keep the `/health` endpoint, `getHealth`, the `ApiModel` base, the api-client plumbing, `packages/ui`, and the tooling. They are the template's real value.
+
+After removing example code: run `pnpm api:schema` (the OpenAPI file and generated types shrink), then `uv lock` if you dropped a Python dependency, then `pnpm check`.
+
 ## Commands
 
 ```sh
